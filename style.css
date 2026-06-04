@@ -1,0 +1,232 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Inter', 'Franklin Gothic Medium', Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+#home {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+header, footer {
+    min-height: 90px;
+    width: 100%;
+    background-color: #81afc6;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+nav {
+    min-height: 90px;
+    width: 100%;
+    background-color: #81afc6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+footer {
+    justify-content: center;
+}
+
+#icon img {
+    max-height: 70px;
+    max-width: 70px;
+    margin-left: 15px;
+}
+
+nav .sec-link {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.header-link {
+    margin: 5px;
+    padding: 8px;
+}
+
+.header-link:hover {
+    background-color: #487f9b;
+    border-radius: 20px;
+}
+
+section {
+    height: 100%;
+    width: 100%;
+    padding: 20px 0;
+}
+
+section .content {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.cam-div {
+    color: black;
+    margin: 20px;
+    flex: 1 1 200px;
+    max-width: 33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cam-card {
+    width: 100%;
+    max-height: 220px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 15px;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.cam-card h1 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 15px;
+    font-family: 'Bebas Neue', 'Franklin Gothic Medium', Arial, sans-serif;
+    letter-spacing: 2px;
+}
+
+.cam-card .temp-valor {
+    font-size: 70px;
+    font-weight: bolder;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.cam-card .temp-status {
+    font-size: 14px;
+    color: #666;
+}
+
+.cam-card.online .temp-status {
+    color: #48989b;
+    font-weight: 600;
+}
+
+.cam-card.sin-sensor {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.cam-card:not(.sin-sensor):hover {
+    background-color: #668da0;
+    color: white;
+}
+
+.cam-card:not(.sin-sensor):hover .temp-status {
+    color: #d0eef0;
+}
+
+/* Historial */
+#his {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+}
+
+#month {
+    color: #487f9b;
+    text-decoration: underline;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    letter-spacing: 1px;
+    font-size: 26px;
+}
+
+#his-1 h2 {
+    font-size: 90px;
+    font-weight: bolder;
+    margin: 20px;
+    color: #48989b;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+}
+
+#his-1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    text-align: center;
+}
+
+#his-1 h1 {
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    letter-spacing: 2px;
+    font-size: 22px;
+    color: #3b5b6b;
+}
+
+#his-2 {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+}
+
+#status {
+    font-size: 18px;
+    color: #48989b;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .cam-div { max-width: 45%; }
+    .cam-card .temp-valor { font-size: 50px; }
+    #his-1 h2 { font-size: 60px; }
+    #his-1 { width: 45%; }
+    #his-2 { width: 55%; }
+}
+
+@media screen and (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+    }
+    .sec-link { margin-top: 10px; }
+    .content {
+        flex-direction: column;
+        align-items: center;
+    }
+    .cam-div {
+        max-width: 90%;
+        width: 80%;
+        margin: 10px 0;
+    }
+    .cam-card .temp-valor { font-size: 60px; }
+    #his {
+        flex-direction: column;
+    }
+    #his-1, #his-2 {
+        width: 100%;
+    }
+    #his-1 h2 { font-size: 60px; }
+    footer {
+        text-align: center;
+        padding: 10px;
+    }
+}
