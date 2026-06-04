@@ -1,6 +1,22 @@
-FROM php:8.1-apache
+FROM php:8.1-fpm-alpine
+
 RUN docker-php-ext-install pdo pdo_mysql
-RUN a2dismod mpm_event mpm_worker 2>/dev/null || true && a2enmod mpm_prefork
+
+RUN apk add --no-cache nginx
+
 COPY . /var/www/html/
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/ports.conf && sed -i 's/80/${PORT}/g' /etc/apache2/sites-enabled/000-default.conf
+
+RUN echo 'server { \
+    listen ${PORT}; \
+    root /var/www/html; \
+    index index.php; \
+    location ~ \.php$ { \
+        fastcgi_pass 127.0.0.1:9000; \
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; \
+        include fastcgi_params; \
+    } \
+}' > /etc/nginx/http.d/default.conf
+
 EXPOSE ${PORT}
+
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
