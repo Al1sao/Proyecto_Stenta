@@ -125,10 +125,10 @@
                 datasets: [
                 {   label: 'promedio',
                     data: valoresProm,
-                    borderColor: '#000000',
+                    borderColor: '#173a4b',
                     borderWidth: 3,
                     tension: 0.3,
-                    pointBackgroundColor: '#000000',
+                    pointBackgroundColor: '#173a4b',
                     pointRadius: 4,
                 },
                 {
