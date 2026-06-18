@@ -31,7 +31,7 @@
                 <p id="ultima-actualizacion" style="font-size:13px;color:#888;margin-top:8px;"></p>
             </div>
             <div class="content" id="his-2">
-                <h1 id="month">Historial Mensual - Cámara 1</h1><br>
+                <h1 id="week">Historial Mensual - Cámara 1</h1><br>
                 <div id="loading-chart" style="text-align:center;padding:40px;color:#888;">Cargando datos...</div>
                 <canvas id="temp" style="display:none;"></canvas>
             </div>
@@ -61,10 +61,10 @@
                     const h2 = document.getElementById('temp-actual');
                     if (val > 30) {
                         h2.style.color = '#e05050';
-                        document.getElementById('status').textContent = '⚠️ Temperatura alta';
+                        document.getElementById('status').textContent = 'Temperatura alta!!!';
                     } else if (val < -55) {
                         h2.style.color = '#5080e0';
-                        document.getElementById('status').textContent = '⚠️ Temperatura baja';
+                        document.getElementById('status').textContent = 'Temperatura baja!!!';
                     } else {
                         h2.style.color = '#48989b';
                         document.getElementById('status').textContent = '✓ Temperatura normal';
@@ -77,7 +77,7 @@
 
         async function cargarHistorial() {
             try {
-                const res = await fetch(`${API}/HistorialMensual.php?id_camara=${ID_CAMARA}`);
+                const res = await fetch(`${API}/HistorialSemanal.php?id_camara=${ID_CAMARA}`);
                 const data = await res.json();
 
                 document.getElementById('loading-chart').style.display = 'none';
@@ -85,24 +85,34 @@
 
                 if (!data || data.length === 0) {
                     document.getElementById('loading-chart').style.display = 'block';
-                    document.getElementById('loading-chart').textContent = 'Sin datos en el último mes.';
+                    document.getElementById('loading-chart').textContent = 'Sin datos en la ultima semana.';
                     document.getElementById('temp').style.display = 'none';
                     return;
                 }
 
                 // Agrupar por día — promedio diario
-                const porDia = {};
+                const porDiaProm = {};
+                //VARIABLES PARA MAXIMOS Y MINIMOS
+                const porDiaMax = {};
+                const porDiaMin = {};
+                //Despues:
+                //valoresProm
+                //valoresMax
+                //valoresMin
                 data.forEach(row => {
                     const dia = row.fecha;
-                    if (!porDia[dia]) porDia[dia] = [];
-                    porDia[dia].push(parseFloat(row.valor));
+                    if (!porDiaProm[dia]) porDiaProm[dia] = [];
+                    porDiaProm[dia].push(parseFloat(row.valor));
                 });
 
-                const labels = Object.keys(porDia).map(f => {
+                const labels = Object.keys(porDiaProm).map(f => {
                     const d = new Date(f + 'T00:00:00');
-                    return d.getDate() + '/' + (d.getMonth() + 1);
-                });
-                const valores = Object.values(porDia).map(arr =>
+                    return d.toLocaleDateString('es-AR', {
+                        weekday: 'short'
+                    });
+});
+//VARIABLES PROMEDIO, MAXIMO y MINIMO
+                const valoresProm = Object.values(porDiaProm).map(arr =>
                     (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1)
                 );
 
@@ -111,17 +121,36 @@
                 chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels,
-                        datasets: [{
-                            data: valores,
-                            borderColor: '#48989b',
-                            backgroundColor: 'rgba(72, 152, 155, 0.15)',
-                            borderWidth: 3,
-                            tension: 0.3,
-                            pointBackgroundColor: '#3b5b6b',
-                            pointRadius: 4
-                        }]
-                    },
+                labels: labels,
+                datasets: [
+                {   label: 'promedio',
+                    data: valoresProm,
+                    borderColor: '#000000',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointBackgroundColor: '#000000',
+                    pointRadius: 4,
+                },
+                {
+                    label: 'minimo',
+                    data: valoresMin,
+                    borderColor: '#2c569d',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointBackgroundColor: '#2c569d',
+                    pointRadius: 4,
+                },
+                {
+                    label: 'maximo',
+                    data: valoresMax,
+                    borderColor: '#d84b4b',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointBackgroundColor: '#d84b4b',
+                    pointRadius: 4,
+                }
+            ]
+            },
                     options: {
                         responsive: true,
                         plugins: { legend: { display: false } },
