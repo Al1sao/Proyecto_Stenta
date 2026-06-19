@@ -31,7 +31,7 @@
                 <p id="ultima-actualizacion" style="font-size:13px;color:#888;margin-top:8px;"></p>
             </div>
             <div class="content" id="his-2">
-                <h1 id="week">Historial Mensual - Cámara 1</h1><br>
+                <h1 id="week">Historial Semanal - Cámara 1</h1><br>
                 <div id="loading-chart" style="text-align:center;padding:40px;color:#888;">Cargando datos...</div>
                 <canvas id="temp" style="display:none;"></canvas>
             </div>
@@ -57,7 +57,6 @@
                     document.getElementById('ultima-actualizacion').textContent =
                         `Última lectura: ${data.fecha} ${data.hora}`;
 
-                    // Color según temperatura
                     const h2 = document.getElementById('temp-actual');
                     if (val > 30) {
                         h2.style.color = '#e05050';
@@ -90,30 +89,36 @@
                     return;
                 }
 
-                // Agrupar por día — promedio diario
+                // Agrupar por día
                 const porDiaProm = {};
-                //VARIABLES PARA MAXIMOS Y MINIMOS
                 const porDiaMax = {};
                 const porDiaMin = {};
-                //Despues:
-                //valoresProm
-                //valoresMax
-                //valoresMin
+
                 data.forEach(row => {
                     const dia = row.fecha;
-                    if (!porDiaProm[dia]) porDiaProm[dia] = [];
+                    if (!porDiaProm[dia]) {
+                        porDiaProm[dia] = [];
+                        porDiaMax[dia] = [];
+                        porDiaMin[dia] = [];
+                    }
                     porDiaProm[dia].push(parseFloat(row.valor));
+                    porDiaMax[dia].push(parseFloat(row.valor));
+                    porDiaMin[dia].push(parseFloat(row.valor));
                 });
 
                 const labels = Object.keys(porDiaProm).map(f => {
                     const d = new Date(f + 'T00:00:00');
-                    return d.toLocaleDateString('es-AR', {
-                        weekday: 'short'
-                    });
-});
-//VARIABLES PROMEDIO, MAXIMO y MINIMO
+                    return d.toLocaleDateString('es-AR', { weekday: 'short' });
+                });
+
                 const valoresProm = Object.values(porDiaProm).map(arr =>
                     (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1)
+                );
+                const valoresMax = Object.values(porDiaMax).map(arr =>
+                    Math.max(...arr).toFixed(1)
+                );
+                const valoresMin = Object.values(porDiaMin).map(arr =>
+                    Math.min(...arr).toFixed(1)
                 );
 
                 const ctx = document.getElementById('temp');
@@ -121,41 +126,47 @@
                 chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                labels: labels,
-                datasets: [
-                {   label: 'promedio',
-                    data: valoresProm,
-                    borderColor: '#173a4b',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    pointBackgroundColor: '#173a4b',
-                    pointRadius: 4,
-                },
-                {
-                    label: 'minimo',
-                    data: valoresMin,
-                    borderColor: '#2c569d',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    pointBackgroundColor: '#2c569d',
-                    pointRadius: 4,
-                },
-                {
-                    label: 'maximo',
-                    data: valoresMax,
-                    borderColor: '#d84b4b',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    pointBackgroundColor: '#d84b4b',
-                    pointRadius: 4,
-                }
-            ]
-            },
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Promedio',
+                                data: valoresProm,
+                                borderColor: '#173a4b',
+                                backgroundColor: 'rgba(23,58,75,0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                pointBackgroundColor: '#173a4b',
+                                pointRadius: 4,
+                            },
+                            {
+                                label: 'Mínimo',
+                                data: valoresMin,
+                                borderColor: '#2c569d',
+                                backgroundColor: 'rgba(44,86,157,0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                pointBackgroundColor: '#2c569d',
+                                pointRadius: 4,
+                            },
+                            {
+                                label: 'Máximo',
+                                data: valoresMax,
+                                borderColor: '#d84b4b',
+                                backgroundColor: 'rgba(216,75,75,0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                pointBackgroundColor: '#d84b4b',
+                                pointRadius: 4,
+                            }
+                        ]
+                    },
                     options: {
                         responsive: true,
-                        plugins: { legend: { display: false } },
+                        plugins: {
+                            legend: { display: true }
+                        },
                         scales: {
-                            x: { title: { display: true, text: 'Fecha' } },
+                            x: { title: { display: true, text: 'Día' } },
                             y: { title: { display: true, text: 'Temperatura °C' } }
                         }
                     }
@@ -165,13 +176,9 @@
             }
         }
 
-        // Cargar al inicio
         cargarTempActual();
         cargarHistorial();
-
-        // Actualizar temperatura cada 5 segundos
         setInterval(cargarTempActual, 5000);
-        // Actualizar historial cada 60 segundos
         setInterval(cargarHistorial, 60000);
     </script>
 </body>

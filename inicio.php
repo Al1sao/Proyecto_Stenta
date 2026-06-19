@@ -80,15 +80,17 @@
         const API = 'https://proyectostenta-production.up.railway.app';
         function cargarGrafico(valor) {
 
-            const LIMITE = 20;
+            const LIMITE_MIN = 10;
+            const LIMITE_MAX = 40;
+            const RANGO = LIMITE_MAX - LIMITE_MIN;
             const svg = document.getElementsByClassName("gauge");
             const cx = 140;
             const cy = 140;
             const r = 100;
-            const temperatura = Math.max(-LIMITE, Math.min(LIMITE, valor));
+            const temperatura = Math.max(LIMITE_MIN, Math.min(LIMITE_MAX, valor));
             const activo = tempToAngle(temperatura);
-            const ticksMayor = [-20,-10,0,10,20];
-            const ticksMenor = [-15,-5,5,15];
+            const ticksMayor = [10, 17, 25, 32, 40];
+            const ticksMenor = [13, 21, 28, 36];
             function polar(angulo, radio){
                 const rad = (angulo - 90) * Math.PI / 180;
                 return {
@@ -107,12 +109,12 @@
                 `;
             }
             function tempToAngle(t){
-                const clamped = Math.max(-LIMITE, Math.min(LIMITE, t));
-                return -90 + ((clamped + LIMITE) / (LIMITE * 2)) * 180;
+                const clamped = Math.max(LIMITE_MIN, Math.min(LIMITE_MAX, t));
+                return -90 + ((clamped - LIMITE_MIN) / RANGO) * 180;
             }
 
             for (let i = 0; i < svg.length; i++) {
-                const aguja = (i === 0) ? activo : tempToAngle(0);
+                const aguja = (i === 0) ? activo : tempToAngle(25);
                 const camaraActiva = (i === 0) ? `
                     <path d="${arco(-90,activo)}"
                         fill="none"
